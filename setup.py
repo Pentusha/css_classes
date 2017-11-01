@@ -5,7 +5,7 @@ from setuptools import setup
 
 setup(
     name='css_classes',
-    version='1.0',
+    version='1.1',
     description='Simple python analog of npm package "classnames"',
     author='Ivan Larin',
     author_email='pentusha@gmail.com',

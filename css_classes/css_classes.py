@@ -1,5 +1,10 @@
-from collections import Iterable, OrderedDict
-from typing import List, Dict
+from collections import OrderedDict
+from itertools import chain
+from typing import Dict, Iterable, Iterator, Union, Optional
+
+
+_Iterable = Iterable[Optional[Union[str, Dict, Iterable]]]
+_Dict = Dict[Optional[Union[str, Iterable[str]]], bool]
 
 
 class CssClasses:
@@ -12,44 +17,39 @@ class CssClasses:
         self._kwargs = kwargs
 
     @classmethod
-    def _dict_to_classes(cls, item: Dict[str, bool],
-                         underscore_as_dash: bool=False) -> List[str]:
-        classes = []
+    def _dict_to_classes(cls, item: _Dict,
+                         underscore_as_dash: bool=False) -> Iterator[str]:
         for k, v in item.items():
             if k and v:
                 if isinstance(k, str):
                     if underscore_as_dash:
                         k = k.replace('_', '-')
-                    classes.append(k)
+                    yield k
                 elif isinstance(k, Iterable):
-                    classes.extend(cls._iterable_to_classes(k))
-        return classes
+                    yield from cls._iterable_to_classes(k)
 
     @classmethod
-    def _iterable_to_classes(cls, iterable) -> List[str]:
-        classes = []
+    def _iterable_to_classes(cls, iterable: _Iterable) -> Iterator[str]:
         for item in iterable:
+            if not item:
+                continue
             if isinstance(item, str):
-                classes.append(item)
+                yield item
             elif isinstance(item, dict):
-                classes.extend(cls._dict_to_classes(item))
+                yield from cls._dict_to_classes(item)
             elif isinstance(item, Iterable):
-                classes.extend(cls._iterable_to_classes(item))
+                yield from cls._iterable_to_classes(item)
             else:
                 raise ValueError(f'CSS class "{item!s}" should be a string')
-        return classes
-
-    def _args_to_classes(self):
-        return self._iterable_to_classes(self._args)
-
-    def _kwargs_to_classes(self):
-        return self._dict_to_classes(
-            item=self._kwargs,
-            underscore_as_dash=self._underscore_as_dash,
-        )
 
     def __str__(self):
-        classes = *self._args_to_classes(), *self._kwargs_to_classes()
+        classes = chain(
+            self._iterable_to_classes(self._args),
+            self._dict_to_classes(
+                item=self._kwargs,
+                underscore_as_dash=self._underscore_as_dash,
+            ),
+        )
         unique_ever_seen = OrderedDict.fromkeys(' '.join(classes).split(' '))
         return ' '.join(unique_ever_seen.keys())
 

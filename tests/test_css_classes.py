@@ -6,6 +6,7 @@ from css_classes import css_classes
 @pytest.mark.parametrize('args, kwargs, expected', (
     (('btn',), {}, 'btn'),
     (('btn btn',), {}, 'btn'),
+    (('btn', None), {}, 'btn'),
     (('btn', 'btn'), {}, 'btn'),
     (('btn btn-success',), {}, 'btn btn-success'),
     (('btn', 'btn-success'), {}, 'btn btn-success'),
