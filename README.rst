@@ -37,6 +37,6 @@ Usage
 .. |coverage| image:: http://coveralls.io/repos/Pentusha/cinemate/badge.svg?branch=master
    :alt: Tests Coverage
    :target: https://coveralls.io/r/Pentusha/css_classes
-.. |wheel| image:: http://pypip.in/wheel/css_classes/badge.svg?style=flat
+.. |wheel| image:: https://img.shields.io/pypi/wheel/css_classes.svg?style=flat
    :alt: Wheel Status
    :target: https://pypi.python.org/pypi/css_classes/
